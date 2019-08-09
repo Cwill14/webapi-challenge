@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+
 const peopleRouter = require('./peopleRouter.js');
+const choresRouter = require('./choresRouter.js');
 
 const server = express();
 
@@ -11,6 +13,8 @@ server.use(helmet());
 server.use(logger);
 
 server.use('/people', peopleRouter);
+server.use('/chores', choresRouter);
+
 server.get('/', (req, res) => {
     res.status(200).json({
         Dustin: "it's working!"
