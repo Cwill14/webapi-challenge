@@ -126,7 +126,6 @@ server.get('/people/:id/chores', (req, res) => {
     if (people.map(person => Number(person.id)).includes(Number(id))) {
     // if (id) {
         // if (id ===) {
-
         // }
         res.status(200).json(chores.filter(chore => chore.assignedTo == id))
     } else {
