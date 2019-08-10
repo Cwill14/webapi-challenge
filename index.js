@@ -21,6 +21,27 @@ function logger(req, res, next) {
     next()
 };
 
+function validateChore(req, res, next) {
+    // if (req.body.description || req.body.assignedTo) {
+    if (req.body.description) {
+        if (!req.body.completed) {
+            req.body.completed = false;
+        }
+        if (people.map(person => person.id).includes(req.body.assignedTo)) {
+            next();
+        } else {
+            res.status(400).json({ error: "no person with given id exists" })
+        }
+    } else {
+        // res.status(400).json({ error: "please provide a description text and an assignedTo number"})
+        res.status(400).json({ error: "please provide description"})
+    }
+}
+
+server.get('/', (req, res) => {
+    res.status(200).json({ server: "it's working!" })    
+});
+
 server.get('/chores', (req, res) => {
     // let completed = req.query;
     // console.log(completed);
@@ -34,8 +55,10 @@ server.get('/chores', (req, res) => {
     }
 });
 
-server.post('/chores', (req, res) => {
-    
+server.post('/chores', validateChore, (req, res) => {
+    req.body.id = chores.length + 1;
+    chores.push(req.body);
+    res.status(201).json(chores);
 });
 
 server.get('/chores/:id', (req, res) => {
