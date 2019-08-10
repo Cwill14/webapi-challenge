@@ -50,7 +50,22 @@ server.get('/people/:id', (req, res) => {
 });
 
 server.get('/people/:id/chores', (req, res) => {
-    
+    const { id } = req.params;
+    // console.log(people.map(person => person.id));
+    // console.log(people.map(person => Number(person.id)));
+    console.log(people.map(person => Number(person.id)).includes(Number(id)));
+    // console.log(id);
+    // console.log(Number(id));
+    // if (people.includes(people.map(person => person.id))) {
+    if (people.map(person => Number(person.id)).includes(Number(id))) {
+    // if (id) {
+        // if (id ===) {
+
+        // }
+        res.status(200).json(chores.filter(chore => chore.assignedTo == id))
+    } else {
+        res.status(404).json({ error: "no person with given id exists" })        
+    }
 });
 
 const port = process.env.PORT || 8000;
