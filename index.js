@@ -22,7 +22,16 @@ function logger(req, res, next) {
 };
 
 server.get('/chores', (req, res) => {
-    res.status(200).json(chores)
+    // let completed = req.query;
+    // console.log(completed);
+    let { completed } = req.query;
+    if (completed) {
+        // res.status(200).json(chores.filter(chore => chore.completed == completed))
+        res.status(200).json(chores.filter(chore => chore.completed.toString() === completed))
+
+    } else {
+        res.status(200).json(chores)
+    }
 });
 
 server.post('/chores', (req, res) => {
