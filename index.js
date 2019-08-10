@@ -53,9 +53,17 @@ function validatePutChoreId(req, res, next) {
     }
 }
 
-server.get('/', (req, res) => {
-    res.status(200).json({ server: "it's working!" })    
-});
+function incrementId(req, res, next) {
+    const url = req.url;
+    console.log("url: ", url);
+    url.match()
+    req.body.id = arr.length + 1;
+    next();
+}
+
+// server.get('/', (req, res) => {
+//     res.status(200).json({ server: "it's working!" })    
+// });
 
 server.get('/chores', (req, res) => {
     // let completed = req.query;
@@ -71,6 +79,8 @@ server.get('/chores', (req, res) => {
 });
 
 server.post('/chores', validateChore, (req, res) => {
+// server.post('/chores', validateChore, incrementId, (req, res) => {
+    // incrementId(chores);
     req.body.id = chores.length + 1;
     chores.push(req.body);
     res.status(201).json(chores);
@@ -130,6 +140,30 @@ server.get('/people/:id/chores', (req, res) => {
         res.status(200).json(chores.filter(chore => chore.assignedTo == id))
     } else {
         res.status(404).json({ error: "no person with given id exists" })        
+    }
+});
+
+server.post('/people', (req, res) => {
+// server.post('/people', incrementId, (req, res) => {
+
+    // incrementId(people);
+    req.body.id = people.length + 1;
+    if (req.body.name) {
+        people.push(req.body);
+        res.status(200).json(people);
+    } else {
+        res.status(400).json({ error: "please provide name" });
+    }
+    
+});
+
+server.delete('/people/:id', (req, res) => {
+    const { id } = req.params;
+    if (id) {
+        people.splice(id - 1);
+        res.status(200).json(people);
+    } else {
+        res.status(404).json({ error: "no person with given id exists" })
     }
 });
 
