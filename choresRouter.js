@@ -3,35 +3,17 @@ const router = require('express').Router();
 const people = require('./pDb.js');
 const chores = require('./cDb.js');
 
-// router.get('/', (req, res) => {
-//     res.status(200).json(chores);    
-// });
-
-router.get('/'), (req, res) => {
+router.get('/', (req, res) => {
     let { completed } = req.query;
-    // const completed = req.query.completed;
-    // console.log(completed);
-    // if (completed === true) {
-        // res.status(200).json(chores.filter(chore => {
-        //     chore.completed === true
-        // }))
-    // } else if (completed === false) {
-    //     res.status(200).json(chores.filter(chore => {
-    //         chore.completed === false
-    //     }))
-    // }
-    console.log(completed);
     if (completed) {
-        const filter = completed == true ? true : false
-        const result = chores.filter(chore => chore.completed == filter)
+        const result = chores.filter(chore => chore.completed.toString() === completed)
         res.status(200).json(result)
     } else {
         res.status(200).json(chores);
     }
-}
+})
 
-
-router.post('/', autoIncrementId, (req, res) => {
+router.post('/', autoIncrementId, validateChore, (req, res) => {
     let choreBody = req.body;
     chores.push(choreBody)
     res.status(201).json(chores)
@@ -43,7 +25,7 @@ router.delete('/:id', (req, res) => {
     res.status(200).json(chores);
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validateChore, (req, res) => {
     const changes = req.body;
     const { id } = req.params;
     chores[id - 1] = changes;
@@ -55,6 +37,21 @@ function autoIncrementId(req, res, next) {
     next();
 }
 
-
+function validateChore(req, res, next){
+    let aIdNum = Number(req.body.assignedTo);
+    if (req.body) {
+        if (req.body.description && req.body.assignedTo) {
+            if (req.body.assignedTo && people.map(person => person.id).includes(aIdNum)){
+                next();
+            } else {
+                res.status(400).json({ error: "No person exists with given assignedTo value as id" })
+            }
+        } else {
+            res.status(400).json({ error: "assignedTo or description missing" })
+        }
+    } else {
+        res.status(400).json({ message: "missing user data" })
+    }
+}
 
 module.exports = router;

@@ -3,26 +3,28 @@ const router = require('express').Router();
 const people = require('./pDb.js');
 const chores = require('./cDb.js');
 
-
-router.get('/:id'/chores, (req, res) => {
-    const pId = req.params.id;
-//     let aID = chores.assignedTo;
-//     chores[id === assignedTo]; 
-
-//     if (pId) {
-//         if (aID) {
-//             res.status(200)
-//         } else {
-//             res.status(200).json([]);
-//         }
-//     } else {
-//         res.status(404).json({ error: "no person with given Id exists in database" })
-//     }
-});
-
 router.get('/', (req, res) => {
     res.status(200).json(people)
 })
+
+router.get('/:id', (req, res) => {
+    const { id } = req.params;
+    if (id) {
+        res.status(200).json(people[id -1])
+    } else {
+        res.status(404).json({ error: "No person with given ID exists" })
+    }
+})
+
+router.get('/:id/chores', (req, res) => {
+    const pId = req.params.id;
+    if (pId) {
+        let result = chores.filter(chore => chore.assignedTo == pId)
+        res.status(200).json(result)
+    } else {
+        res.status(404).json({ error: "No person with given ID exists" })
+    }
+});
 
 function validateName(req, res, next){
     if (req.body) {
